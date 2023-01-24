@@ -12,7 +12,7 @@ real(dp) :: rg, masstotal, binwidth
 real(dp) :: scattering_sum = 0.0
 
 real(dp), dimension(:), allocatable :: rx, ry, rz, mass
-real(dp), dimension(:,:), allocatable :: atom, k
+real(dp), dimension(:,:), allocatable :: atom, totalatom
 
 real(dp) :: xmin, xmax, ymin, ymax, zmin, zmax, lx, ly, lz
 
@@ -20,7 +20,7 @@ real(dp) :: xmin, xmax, ymin, ymax, zmin, zmax, lx, ly, lz
 real(dp), dimension(:,:), allocatable :: rdist
 
 ! index and types for atoms
-integer(8), dimension(:), allocatable :: nindex, atomtype, typesanalyse, molanalyse
+integer(8), dimension(:), allocatable :: nindex, atomtype, totalatomtype, typesanalyse, molanalyse
 
 ! trajectory numbers, timestep, number of total frames, number of frames to skip, number of frames to calculate, 
 ! number of atoms to analyse (nmol*molsize), number of atom types

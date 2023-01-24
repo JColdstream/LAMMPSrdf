@@ -63,7 +63,9 @@ call readheader
 call readmasses
 call nanalyse_setup
 allocate(atom(3, nanalyse))
+allocate(totalatom(3, ntotal))
 allocate(atomtype(nanalyse))
+allocate(totalatomtype(ntotal))
 ! Go back to the start of the file.
 rewind(11)
 
@@ -183,6 +185,8 @@ subroutine readcoordinates
       atomtype(j) = temp_atom_type
       j = j+1
     endif
+    totalatomtype(i) = temp_atom_type
+    totalatom(:, i) = (/tempx, tempy, tempz/)
   enddo
 
  ! Zero coordinates.
@@ -251,6 +255,15 @@ subroutine iteratecom
       endif
     enddo
   enddo
+
+  do mol = 1, ntotal
+    do i = 1, 3
+      drcom = totalatom(i, mol) - com(i)
+      if ( abs(drcom) .gt. lx/2 ) then
+        totalatom(i, mol) = totalatom(i, mol) - lx*anint(drcom/lx)
+      endif
+    enddo
+  enddo
 end subroutine iteratecom
 
 subroutine radialdensityfunction
@@ -260,17 +273,17 @@ subroutine radialdensityfunction
   !$OMP PARALLEL DO &
   !$OMP SCHEDULE(DYNAMIC) &
   !$OMP DEFAULT(NONE) &
-  !$OMP SHARED(nq, q, lx, atom, nanalyse, b, atomtype, rg) &
+  !$OMP SHARED(nq, q, lx, atom, nanalyse, b, totalatomtype, rg) &
   !$OMP PRIVATE(iq, moli, molj, drsq, dr, qrij, dxyz, i, tempq) &
   !$OMP REDUCTION(+:p)
 
-  do mol = 1, nanalyse
+  do mol = 1, ntotal
     drsq = 0.0_dp
     do i = 1, 3
-      drsq = drsq + (atom(i, mol) - com(i))**2
+      drsq = drsq + (totalatom(i, mol) - com(i))**2
     end do  
     rbin = int(sqrt(drsq)/binwidth+1)
-    rdist(atomtype(mol), rbin) = rdist(atomtype(mol), rbin) + 1.0
+    rdist(totalatomtype(mol), rbin) = rdist(totalatomtype(mol), rbin) + 1.0
   end do  
   !$OMP END PARALLEL DO
 
@@ -285,7 +298,7 @@ subroutine rdf_output
   ! calculate the density
   do t = 1, ntypes
     do i = 1, nbins
-      vshell = (4.0/3.0) * pi * (i*binwidth)**3 - ((i-1)*binwidth)**3
+      vshell = (4.0/3.0) * pi * ((i*binwidth)**3 - ((i-1)*binwidth)**3)
       rdist(t, i) = rdist(t, i)/vshell 
     enddo
   enddo 

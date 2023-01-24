@@ -1,9 +1,9 @@
 ! Input file for rdf.f90
 
-test_e1812.lammpstrj
+nptpro_2.lammpstrj
 masses.in           File for masses (0 calculates the unweighted scattering sum).
-500                             Skip frames
-700                           Last frame (inclusive), 0 calculates all frames.
-12                              TOTAL number of atom types.
-1,2,3,4,5,6,7,8,9                 Atom types to include in the calculation (comma delimited integers).
-0.1                          Bin width.
+0                             Skip frames
+2000                           Last frame (inclusive), 0 calculates all frames.
+20                              TOTAL number of atom types.
+1,2,3,4,5,6,8,9,10,11,12,14,15,16,17,18,19,20                 Atom types to include in the calculation (comma delimited integers).
+0.5                          Bin width.
