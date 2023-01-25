@@ -9,27 +9,20 @@ frame = 1
 call start
 open(unit = 110, file='test.xyz', status='unknown')
 
-do while ( trajstatus .eq. 0 .and. (lastframe .eq. 0 .or. frame .le. lastframe) )
-  !if (mod(frame, 50) .eq. 0) write(*,*) frame
-  write(*, *) frame
+do while (lastframe .eq. 0 .or. frame .le. lastframe)
+  if (mod(frame, 50) .eq. 0) write(*,*) 'FRAME : ', frame
   call readheader
-  write(*, *) 'readheader' 
+  if (trajstatus .ne. 0) exit
   call readcoordinates
-  write(*, *) 'readcoords' 
   call initialcom
-  write(*, *) 'initialcom' 
   call iteratecom
-  write(*, *) 'iteratecom' 
-  ! call cogstructure
-  write (110, *) nanalyse+1
-  write (110, *)
+  write(110, *) nanalyse+1
+  write(110, *)
   write(110, *) 'Zn', com(:)
   do iter = 1, nanalyse
     write(110, *) 'C', atom(:, iter)
   enddo
-  write(*, *) 'written test.xyz' 
   call radialdensityfunction
-  write(*, *) 'rdf'
   frame = frame+1
 enddo
 
@@ -69,7 +62,7 @@ allocate(totalatomtype(ntotal))
 ! Go back to the start of the file.
 rewind(11)
 
-call skipframe
+! call skipframe
 frame = frame+nskip
 
 end subroutine start
@@ -87,7 +80,7 @@ read(10, *) ntypes
 read(10, '(a)') strtypesanalyse
 read(10, *) binwidth
 typesanalyse = string_to_integers(strtypesanalyse, ",")
-write(*,*) trajfile
+write(*,*) 'Trajectory file : ', trajfile
 
 
 end subroutine readinput
@@ -244,7 +237,6 @@ subroutine iteratecom
     if (com_diff_mag .eq. 0.0_dp) then
       final_com = .True.
     endif
-    write(*, *) com
   enddo
 
   do mol = 1, nanalyse
@@ -264,6 +256,7 @@ subroutine iteratecom
       endif
     enddo
   enddo
+
 end subroutine iteratecom
 
 subroutine radialdensityfunction
@@ -314,6 +307,8 @@ subroutine rdf_output
     write(mdensf, '(f10.3, 999(e15.6))') (binwidth*(dble(i)-0.5)), & 
       (rdist(j, i)*mass(j)/rdistnrm, j = 1, ntypes)
   enddo
+  write(*,*) 'Number densities written to ndensity.dat'
+  write(*,*) 'Number densities written to massdensity.dat'
   
 end subroutine rdf_output
 
