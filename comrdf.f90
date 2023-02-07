@@ -186,6 +186,10 @@ subroutine readcoordinates
  atom(1, :) = atom(1, :)-xmin
  atom(2, :) = atom(2, :)-ymin
  atom(3, :) = atom(3, :)-zmin
+
+ totalatom(1, :) = totalatom(1, :)-xmin
+ totalatom(2, :) = totalatom(2, :)-ymin
+ totalatom(3, :) = totalatom(3, :)-zmin
 end subroutine readcoordinates
 
 subroutine initialcom
@@ -274,8 +278,8 @@ subroutine radialdensityfunction
     drsq = 0.0_dp
     do i = 1, 3
       drsq = drsq + (totalatom(i, mol) - com(i))**2
-    end do  
-    rbin = int(sqrt(drsq)/binwidth+1)
+    end do 
+    rbin = int(sqrt(drsq)/binwidth)+1
     rdist(totalatomtype(mol), rbin) = rdist(totalatomtype(mol), rbin) + 1.0
   end do  
   !$OMP END PARALLEL DO
