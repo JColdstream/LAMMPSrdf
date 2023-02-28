@@ -12,8 +12,8 @@ open(unit = 110, file='test.xyz', status='unknown')
 do while (lastframe .eq. 0 .or. frame .le. lastframe)
   if (mod(frame, 50) .eq. 0) write(*,*) 'FRAME : ', frame
   call readheader
-  if (trajstatus .ne. 0) exit
   call readcoordinates
+  if ( trajstatus .ne. 0 ) cycle
   call initialcom
   call iteratecom
   write(110, *) nanalyse+1
@@ -62,7 +62,7 @@ allocate(totalatomtype(ntotal))
 ! Go back to the start of the file.
 rewind(11)
 
-! call skipframe
+call skipframe
 frame = frame+nskip
 
 end subroutine start
