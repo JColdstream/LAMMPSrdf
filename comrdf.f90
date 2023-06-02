@@ -309,7 +309,7 @@ subroutine rdf_output
     write(ndensf, '(f10.3, 999(e15.6))') (binwidth*(dble(i)-0.5)), &
       (rdist(j, i)/rdistnrm, j = 1, ntypes)
     write(mdensf, '(f10.3, 999(e15.6))') (binwidth*(dble(i)-0.5)), & 
-      (rdist(j, i)*mass(j)/rdistnrm, j = 1, ntypes)
+      (rdist(j, i)*mass(j)*10**4/(6.022)/rdistnrm, j = 1, ntypes)
   enddo
   write(*,*) 'Number densities written to ndensity.dat'
   write(*,*) 'Number densities written to massdensity.dat'
